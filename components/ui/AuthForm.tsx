@@ -9,20 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { authFormSchema } from "@/lib/utils";
 import CustomInput from "./CustomInput";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
 	const [user, setUser] = useState();
@@ -42,17 +34,17 @@ const AuthForm = ({ type }: { type: string }) => {
 		setISLoading(true);
 
 		try {
-			// if (type === "sign-up") {
-			// 	const newUser = await signUp();
-			// 	setUser(newUser);
-			// }
-			// if (type === "sign-in") {
-			// 	const response = await signIn({
-			// 		email: data.email,
-			// 		password: data.password,
-			// 	});
-			// 	if (response) router.push("/");
-			// }
+			if (type === "sign-up") {
+				const newUser = await signUp(data);
+				setUser(newUser);
+			}
+			if (type === "sign-in") {
+				// const response = await signIn({
+				// 	email: data.email,
+				// 	password: data.password,
+				// });
+				// if (response) router.push("/");
+			}
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -76,7 +68,7 @@ const AuthForm = ({ type }: { type: string }) => {
 
 				<div className="flex flex-col gap-1 md:gap-3">
 					<h1 className="text-24 lg:text-36 font-semibold text-gray-900">
-						{user ? "Link Account" : type === "sign-in" ? "sign-in" : "sign-up"}
+						{user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
 					</h1>
 					<p className="text-16 font-normal text-gray-600">
 						{user
