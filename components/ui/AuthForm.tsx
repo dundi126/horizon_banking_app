@@ -14,11 +14,11 @@ import { authFormSchema } from "@/lib/utils";
 import CustomInput from "./CustomInput";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/actions/user.actions";
+import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
 	const [user, setUser] = useState();
-	const [isLoading, setISLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 
 	const form = useForm<z.infer<typeof authFormSchema>>({
@@ -31,7 +31,9 @@ const AuthForm = ({ type }: { type: string }) => {
 
 	// 2. Define a submit handler.
 	const onSubmit = async (data: z.infer<typeof authFormSchema>) => {
-		setISLoading(true);
+		setIsLoading(true);
+
+		console.log("submit button");
 
 		try {
 			if (type === "sign-up") {
@@ -39,16 +41,17 @@ const AuthForm = ({ type }: { type: string }) => {
 				setUser(newUser);
 			}
 			if (type === "sign-in") {
-				// const response = await signIn({
-				// 	email: data.email,
-				// 	password: data.password,
-				// });
-				// if (response) router.push("/");
+				const response = await signIn({
+					email: data.email,
+					password: data.password,
+				});
+
+				if (response) router.push("/");
 			}
 		} catch (error) {
 			console.log(error);
 		} finally {
-			setISLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -89,13 +92,13 @@ const AuthForm = ({ type }: { type: string }) => {
 									<div className="flex gap-4">
 										<CustomInput
 											control={form.control}
-											name="firstname"
+											name="firstName"
 											label="First Name"
 											placeholder="Enter first name"
 										/>
 										<CustomInput
 											control={form.control}
-											name="lastname"
+											name="lastName"
 											label="Last Name"
 											placeholder="Enter last name"
 										/>
@@ -155,7 +158,13 @@ const AuthForm = ({ type }: { type: string }) => {
 								placeholder="Enter password"
 							/>
 							<div className="flex flex-col gap-4">
-								<Button className="form-btn" type="submit" disabled={isLoading}>
+								<Button
+									type="submit"
+									disabled={isLoading}
+									className="form-btn"
+									onClick={() => {
+										console.log("button clicked");
+									}}>
 									{isLoading ? (
 										<>
 											<Loader2 size={20} className="animate-spin" /> &nbsp;
